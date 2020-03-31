@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.shaofan</groupId>
+    <artifactId>HeavenMS</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>cores</directory>
+                <targetPath>${project.build.directory}/HeavenMS/lib</targetPath>
+                <includes>
+                    <include>**/*.jar</include>
+                </includes>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.5.1</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <encoding>UTF-8</encoding>
+                    <compilerArguments>
+                        <extdirs>cores</extdirs>
+                    </compilerArguments>
+                </configuration>
+            </plugin>
+            <!--            <plugin>-->
+            <!--                <groupId>org.codehaus.mojo</groupId>-->
+            <!--                <artifactId>appassembler-maven-plugin</artifactId>-->
+            <!--                <version>2.0.0</version>-->
+            <!--                <executions>-->
+            <!--                    <execution>-->
+            <!--                        <id>make-assembly</id>-->
+            <!--                        <phase>package</phase>-->
+            <!--                        <goals>-->
+            <!--                            <goal>assemble</goal>-->
+            <!--                        </goals>-->
+            <!--                    </execution>-->
+            <!--                </executions>-->
+            <!--                <configuration>-->
+            <!--                    <encoding>UTF-8</encoding>-->
+            <!--                    <repositoryLayout>flat</repositoryLayout>-->
+            <!--                    <configurationDirectory>conf</configurationDirectory>-->
+            <!--                    <configurationSourceDirectory>src/main/resources</configurationSourceDirectory>-->
+            <!--                    <copyConfigurationDirectory>true</copyConfigurationDirectory>-->
+            <!--                    <includeConfigurationDirectoryInClasspath>true</includeConfigurationDirectoryInClasspath>-->
+            <!--                    <logsDirectory>logs</logsDirectory>-->
+            <!--                    <tempDirectory>temp</tempDirectory>-->
+            <!--                    <assembleDirectory>${project.build.directory}/HeavenMS</assembleDirectory>-->
+            <!--                    <binFileExtensions>-->
+            <!--                        <unix>.sh</unix>-->
+            <!--                    </binFileExtensions>-->
+            <!--                    <platforms>-->
+            <!--                        <platform>windows</platform>-->
+            <!--                        <platform>unix</platform>-->
+            <!--                    </platforms>-->
+            <!--                    <repositoryName>lib</repositoryName>-->
+            <!--                    <programs>-->
+            <!--                        <program>-->
+            <!--                            <id>start</id>-->
+            <!--                            <mainClass>net.server.Server</mainClass>-->
+            <!--                            <name>start</name>-->
+            <!--                            <jvmSettings>-->
+            <!--                                <extraArguments>-->
+            <!--                                    <extraArgument>-Dfile.encoding=UTF-8</extraArgument>-->
+            <!--                                    <extraArgument>-Dvertx.cacheDirBase=../temp/file-cache</extraArgument>-->
+            <!--                                    &lt;!&ndash; 调整内存大小 <extraArgument>-Xmx2G</extraArgument> <extraArgument>-Xms2G</extraArgument> &ndash;&gt;-->
+            <!--                                </extraArguments>-->
+            <!--                            </jvmSettings>-->
+            <!--                        </program>-->
+            <!--                    </programs>-->
+            <!--                </configuration>-->
+            <!--            </plugin>-->
+        </plugins>
+    </build>
+</project>
