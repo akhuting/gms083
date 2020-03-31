@@ -6,23 +6,58 @@
 
     <groupId>org.shaofan</groupId>
     <artifactId>HeavenMS</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>0.83.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP-java7</artifactId>
+            <version>2.4.13</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.mina</groupId>
+            <artifactId>mina-core</artifactId>
+            <version>2.0.19</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>slf4j-api</artifactId>
+                    <groupId>org.slf4j</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.48</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jdk14</artifactId>
+            <version>1.7.5</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>slf4j-api</artifactId>
+                    <groupId>org.slf4j</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.esotericsoftware.yamlbeans</groupId>
+            <artifactId>yamlbeans</artifactId>
+            <version>1.13</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>5.2.4</version>
+        </dependency>
+    </dependencies>
     <build>
-        <resources>
-            <resource>
-                <directory>cores</directory>
-                <targetPath>${project.build.directory}/HeavenMS/lib</targetPath>
-                <includes>
-                    <include>**/*.jar</include>
-                </includes>
-            </resource>
-        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -32,58 +67,54 @@
                     <source>1.8</source>
                     <target>1.8</target>
                     <encoding>UTF-8</encoding>
-                    <compilerArguments>
-                        <extdirs>cores</extdirs>
-                    </compilerArguments>
                 </configuration>
             </plugin>
-            <!--            <plugin>-->
-            <!--                <groupId>org.codehaus.mojo</groupId>-->
-            <!--                <artifactId>appassembler-maven-plugin</artifactId>-->
-            <!--                <version>2.0.0</version>-->
-            <!--                <executions>-->
-            <!--                    <execution>-->
-            <!--                        <id>make-assembly</id>-->
-            <!--                        <phase>package</phase>-->
-            <!--                        <goals>-->
-            <!--                            <goal>assemble</goal>-->
-            <!--                        </goals>-->
-            <!--                    </execution>-->
-            <!--                </executions>-->
-            <!--                <configuration>-->
-            <!--                    <encoding>UTF-8</encoding>-->
-            <!--                    <repositoryLayout>flat</repositoryLayout>-->
-            <!--                    <configurationDirectory>conf</configurationDirectory>-->
-            <!--                    <configurationSourceDirectory>src/main/resources</configurationSourceDirectory>-->
-            <!--                    <copyConfigurationDirectory>true</copyConfigurationDirectory>-->
-            <!--                    <includeConfigurationDirectoryInClasspath>true</includeConfigurationDirectoryInClasspath>-->
-            <!--                    <logsDirectory>logs</logsDirectory>-->
-            <!--                    <tempDirectory>temp</tempDirectory>-->
-            <!--                    <assembleDirectory>${project.build.directory}/HeavenMS</assembleDirectory>-->
-            <!--                    <binFileExtensions>-->
-            <!--                        <unix>.sh</unix>-->
-            <!--                    </binFileExtensions>-->
-            <!--                    <platforms>-->
-            <!--                        <platform>windows</platform>-->
-            <!--                        <platform>unix</platform>-->
-            <!--                    </platforms>-->
-            <!--                    <repositoryName>lib</repositoryName>-->
-            <!--                    <programs>-->
-            <!--                        <program>-->
-            <!--                            <id>start</id>-->
-            <!--                            <mainClass>net.server.Server</mainClass>-->
-            <!--                            <name>start</name>-->
-            <!--                            <jvmSettings>-->
-            <!--                                <extraArguments>-->
-            <!--                                    <extraArgument>-Dfile.encoding=UTF-8</extraArgument>-->
-            <!--                                    <extraArgument>-Dvertx.cacheDirBase=../temp/file-cache</extraArgument>-->
-            <!--                                    &lt;!&ndash; 调整内存大小 <extraArgument>-Xmx2G</extraArgument> <extraArgument>-Xms2G</extraArgument> &ndash;&gt;-->
-            <!--                                </extraArguments>-->
-            <!--                            </jvmSettings>-->
-            <!--                        </program>-->
-            <!--                    </programs>-->
-            <!--                </configuration>-->
-            <!--            </plugin>-->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>appassembler-maven-plugin</artifactId>
+                <version>2.0.0</version>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>assemble</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                    <repositoryLayout>flat</repositoryLayout>
+                    <configurationDirectory>conf</configurationDirectory>
+                    <configurationSourceDirectory>src/main/resources</configurationSourceDirectory>
+                    <copyConfigurationDirectory>true</copyConfigurationDirectory>
+                    <includeConfigurationDirectoryInClasspath>true</includeConfigurationDirectoryInClasspath>
+                    <logsDirectory>logs</logsDirectory>
+                    <tempDirectory>temp</tempDirectory>
+                    <assembleDirectory>${project.build.directory}/HeavenMS</assembleDirectory>
+                    <binFileExtensions>
+                        <unix>.sh</unix>
+                    </binFileExtensions>
+                    <platforms>
+                        <platform>windows</platform>
+                        <platform>unix</platform>
+                    </platforms>
+                    <repositoryName>lib</repositoryName>
+                    <programs>
+                        <program>
+                            <id>start</id>
+                            <mainClass>net.server.Server</mainClass>
+                            <name>start</name>
+                            <jvmSettings>
+                                <extraArguments>
+                                    <extraArgument>-Dfile.encoding=UTF-8</extraArgument>
+                                    <!-- 调整内存大小 <extraArgument>-Xmx2G</extraArgument> <extraArgument>-Xms2G</extraArgument> -->
+                                </extraArguments>
+                            </jvmSettings>
+                        </program>
+                    </programs>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>
