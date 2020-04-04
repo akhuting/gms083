@@ -19,7 +19,8 @@ public class CharsetConstants {
    
     public enum MapleLanguageType {
         LANGUAGE_PT_BR(1, "ISO-8859-1"),
-        LANGUAGE_US(2, "US-ASCII");
+        LANGUAGE_US(2, "US-ASCII"),
+        LANGUAGE_CN(4,"GBK");
         final byte type;
         final String ascii;
  

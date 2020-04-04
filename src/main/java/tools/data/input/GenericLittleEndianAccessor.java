@@ -27,8 +27,8 @@ import java.io.ByteArrayOutputStream;
 /**
  * Provides a generic interface to a Little Endian stream of bytes.
  *
- * @version 1.0
  * @author Frz
+ * @version 1.0
  * @since Revision 323
  */
 public class GenericLittleEndianAccessor implements LittleEndianAccessor {
@@ -129,11 +129,16 @@ public class GenericLittleEndianAccessor implements LittleEndianAccessor {
      * @return The string read.
      */
     public final String readAsciiString(int n) {
-        char ret[] = new char[n];
+        byte[] ret = new byte[n];
         for (int x = 0; x < n; x++) {
-            ret[x] = (char) readByte();
+            ret[x] = readByte();
         }
-        return String.valueOf(ret);
+        try {
+            return new String(ret, "gbk");
+        } catch (Exception e) {
+            System.err.println(e);
+        }
+        return "";
     }
 
     /**
@@ -204,9 +209,9 @@ public class GenericLittleEndianAccessor implements LittleEndianAccessor {
      */
     @Override
     public final Point readPos() {
-	final int x = readShort();
-	final int y = readShort();
-	return new Point(x, y);
+        final int x = readShort();
+        final int y = readShort();
+        return new Point(x, y);
     }
 
     /**
