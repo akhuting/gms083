@@ -35,6 +35,8 @@ import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.ScheduledFuture;
 
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.io.resource.ClassPathResource;
 import net.server.audit.locks.MonitoredReadLock;
 import net.server.audit.locks.MonitoredWriteLock;
 import net.server.audit.locks.factory.MonitoredReadLockFactory;
@@ -481,7 +483,7 @@ public final class Channel {
     
     private static String [] getEvents(){
     	List<String> events = new ArrayList<String>();
-    	for (File file : new File("scripts/event").listFiles()){
+    	for (File file : new ClassPathResource("scripts/event").getFile().listFiles()){
             events.add(file.getName().substring(0, file.getName().length() - 3));
     	}
     	return events.toArray(new String[0]);

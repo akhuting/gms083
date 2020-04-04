@@ -29,6 +29,7 @@ import java.io.IOException;
 
 import javax.script.*;
 
+import cn.hutool.core.io.resource.ClassPathResource;
 import constants.net.ServerConstants;
 import jdk.nashorn.api.scripting.NashornScriptEngine;
 import tools.FilePrinter;
@@ -46,7 +47,7 @@ public abstract class AbstractScriptManager {
 
     protected NashornScriptEngine getScriptEngine(String path) {
         path = "scripts/" + path;
-        File scriptFile = new File(path);
+        File scriptFile = new ClassPathResource(path).getFile();
         if (!scriptFile.exists()) {
             return null;
         }

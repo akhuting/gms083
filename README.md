@@ -10,6 +10,33 @@
 - [ ] WZ优化(MCDB & NX File)
 - [ ] WEB控制台
 ---
+### 打包
+> 打包会稍慢，包含完整wz文件和脚本
+#### maven命令打包
+```
+mvn clean package
+```
+
+#### 运行
+运行target/HeavenMS/bin/中文对应文件
+```
+HeavenMS
+│   
+└───bin
+│   │   start.bat (win)
+│   │   start.sh (linux)
+│   └───wz
+│       │   ...
+│   
+└───conf
+│   │   config.yaml (配置文件)
+│   └───script
+│       │   ...
+```
+
+
+
+---
 ### 下载链接
 
   上传中...........
