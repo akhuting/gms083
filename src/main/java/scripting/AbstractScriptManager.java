@@ -47,8 +47,10 @@ public abstract class AbstractScriptManager {
 
     protected NashornScriptEngine getScriptEngine(String path) {
         path = "scripts/" + path;
-        File scriptFile = new ClassPathResource(path).getFile();
-        if (!scriptFile.exists()) {
+        File scriptFile;
+        try {
+            scriptFile = new ClassPathResource(path).getFile();
+        }catch (Exception e){
             return null;
         }
         NashornScriptEngine engine = (NashornScriptEngine) sef.getScriptEngine();

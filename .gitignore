@@ -1,11 +1,12 @@
 ﻿/logs/**
 .idea/
-
+*.iml
 # build files
 
 /build/
 /dist/
 /nbproject/
+/target/
 
 /tools/MapleArrowFetcher/build/
 /tools/MapleArrowFetcher/dist/

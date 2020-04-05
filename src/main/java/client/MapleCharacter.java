@@ -2086,7 +2086,7 @@ public class MapleCharacter extends AbstractMapleCharacterObject {
                                 int nxGain = mapitem.getItemId() == 4031865 ? 100 : 250;
                                 this.getCashShop().gainCash(1, nxGain);
 
-                                showHint("You have earned #e#b" + nxGain + " NX#k#n. (" + this.getCashShop().getCash(1) + " NX)", 300);
+                                showHint("恭喜获得 #e#b" + nxGain + " 点券#k#n. (" + this.getCashShop().getCash(1) + " 点券)", 300);
 
                                 this.getMap().pickItemDrop(pickupPacket, mapitem);
                             } else if (MapleInventoryManipulator.addFromDrop(client, mItem, true)) {
