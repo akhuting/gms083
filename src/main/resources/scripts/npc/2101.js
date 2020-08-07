@@ -22,19 +22,19 @@
 var status = -1;
 
 function start() {
-    cm.sendYesNo("Are you done with your training? If you wish, I will send you out from this training camp.");
+    cm.sendYesNo("没完成新手训练嘛? 如果想要离开这里, 请不要吝啬的告诉我。");
 }
 
 function action(mode, type, selection) {
     status++;
     if (mode != 1){
         if(mode == 0)
-            cm.sendOk("Haven't you finished the training program yet? If you want to leave this place, please do not hesitate to tell me.");
+            cm.sendOk("你完成你的训练了嘛? 如果你想要离开的话，我可以带你离开。");
         cm.dispose();
         return;
     }
     if (status == 0)
-        cm.sendNext("Then, I will send you out from here. Good job.");
+        cm.sendNext("那我要带你离开这里， 加油！");
     else{
         cm.warp(40000, 0);
         cm.dispose();

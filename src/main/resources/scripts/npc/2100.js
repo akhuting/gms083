@@ -29,31 +29,31 @@ var status = -1;
 
 function start() {
     if (cm.c.getPlayer().getMapId() == 0 || cm.c.getPlayer().getMapId() == 3)
-        cm.sendYesNo("Welcome to the world of MapleStory. The purpose of this training camp is to help beginners. Would you like to enter this training camp? Some people start their journey without taking the training program. But I strongly recommend you take the training program first.");
+        cm.sendYesNo("欢迎来到冒险岛的世界。这个训练营的目的是帮助初学者。你想参加这个训练营吗？有些人没有参加训练计划就开始了他们的旅程。但我强烈建议你先参加训练计划。");
     else
-        cm.sendNext("This is the image room where your first training program begins. In this room, you will have an advance look into the job of your choice.");
+        cm.sendNext("这是你的第一个训练计划开始的图像室。在这个房间里，你将对你选择的职业有一个预先的了解。");
 }
 
 function action(mode, type, selection) {
     status++;
     if (mode != 1) {
         if(mode == 0 && status == 0){
-            cm.sendYesNo("Do you really want to start your journey right away?");
+            cm.sendYesNo("你真的想马上开始你的旅程吗？");
             return;
         }else if(mode == 0 && status == 1 && type == 0){
             status -= 2;
             start();
             return;
         }else if(mode == 0 && status == 1 && type == 1)
-            cm.sendNext("Please talk to me again when you finally made your decision.");
+            cm.sendNext("当你最终做出决定时，请再和我谈谈。");
         cm.dispose();
         return;
     }
     if (cm.c.getPlayer().getMapId() == 0 || cm.c.getPlayer().getMapId() == 3){
         if(status == 0){
-            cm.sendNext("Ok then, I will let you enter the training camp. Please follow your instructor's lead.");
+            cm.sendNext("好吧，那我就让你进入训练营。请听从老师的指导。");
         }else if(status == 1 && type == 1){
-            cm.sendNext("It seems like you want to start your journey without taking the training program. Then, I will let you move on to the training ground. Be careful~");
+            cm.sendNext("好像你想不参加训练就开始你的旅程。那我就让你去训练场。小心点~");
         }else if(status == 1){
             cm.warp(1, 0);
             cm.dispose();
@@ -63,7 +63,7 @@ function action(mode, type, selection) {
         }
     }else
     if(status == 0)
-        cm.sendPrev("Once you train hard enough, you will be entitled to occupy a job. You can become a Bowman in Henesys, a Magician in Ellinia, a Warrior in Perion, and a Thief in Kerning City...");
+        cm.sendPrev("一旦你足够努力地训练，你就有资格进行转职。你可以成为射手村的弓箭手，魔法密林的魔术师，勇士部落的勇士，废弃都市的飞侠。。。");
     else
         cm.dispose();
 }
