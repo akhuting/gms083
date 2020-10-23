@@ -21,121 +21,70 @@
 */
 package client;
 
-import constants.skills.Aran;
-import constants.skills.Archer;
-import constants.skills.Assassin;
-import constants.skills.Bandit;
-import constants.skills.Beginner;
-import constants.skills.Bishop;
-import constants.skills.BlazeWizard;
-import constants.skills.Bowmaster;
-import constants.skills.Buccaneer;
-import constants.skills.ChiefBandit;
-import constants.skills.Cleric;
-import constants.skills.Corsair;
-import constants.skills.Crossbowman;
-import constants.skills.Crusader;
-import constants.skills.DarkKnight;
-import constants.skills.DawnWarrior;
-import constants.skills.DragonKnight;
-import constants.skills.Evan;
-import constants.skills.FPArchMage;
-import constants.skills.FPMage;
-import constants.skills.FPWizard;
-import constants.skills.Fighter;
-import constants.skills.GM;
-import constants.skills.Gunslinger;
-import constants.skills.Hermit;
-import constants.skills.Hero;
-import constants.skills.Hunter;
-import constants.skills.ILArchMage;
-import constants.skills.ILMage;
-import constants.skills.ILWizard;
-import constants.skills.Legend;
-import constants.skills.Magician;
-import constants.skills.Marauder;
-import constants.skills.Marksman;
-import constants.skills.NightLord;
-import constants.skills.NightWalker;
-import constants.skills.Noblesse;
-import constants.skills.Page;
-import constants.skills.Paladin;
-import constants.skills.Pirate;
-import constants.skills.Priest;
-import constants.skills.Ranger;
-import constants.skills.Rogue;
-import constants.skills.Shadower;
-import constants.skills.Sniper;
-import constants.skills.Spearman;
-import constants.skills.SuperGM;
-import constants.skills.Warrior;
-import constants.skills.ThunderBreaker;
-import constants.skills.WhiteKnight;
-import constants.skills.WindArcher;
-
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-
+import constants.skills.*;
 import provider.MapleData;
-import provider.MapleDataDirectoryEntry;
-import provider.MapleDataFileEntry;
 import provider.MapleDataProvider;
 import provider.MapleDataProviderFactory;
 import provider.MapleDataTool;
 import server.MapleStatEffect;
 import server.life.Element;
+import us.aaronweiss.pkgnx.EagerNXFile;
+import us.aaronweiss.pkgnx.NXNode;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SkillFactory {
-    private static Map<Integer, Skill> skills = new HashMap<>();
-    private static MapleDataProvider datasource = MapleDataProviderFactory.getDataProvider(MapleDataProviderFactory.fileInWZPath("Skill.wz"));
+    private static final Map<Integer, Skill> skills = new HashMap<>();
+    private static final String FILE_PATH = System.getProperty("wzpath") + "/Skill.nx";
 
     public static Skill getSkill(int id) {
         if (!skills.isEmpty()) {
-            return skills.get(Integer.valueOf(id));
+            return skills.get(id);
         }
         return null;
     }
 
     public static void loadAllSkills() {
-        final MapleDataDirectoryEntry root = datasource.getRoot();
-        int skillid;    
-        for (MapleDataFileEntry topDir : root.getFiles()) { // Loop thru jobs
-            if (topDir.getName().length() <= 8) {
-                for (MapleData data : datasource.getData(topDir.getName())) { // Loop thru each jobs
-                    if (data.getName().equals("skill")) {
-                        for (MapleData data2 : data) { // Loop thru each jobs
-                            if (data2 != null) {
-                                skillid = Integer.parseInt(data2.getName());
-                                skills.put(skillid, loadFromData(skillid, data2));
-                            }
-                        }
-                    }
+        try {
+            NXNode file = new EagerNXFile(FILE_PATH).getRoot();
+            for (NXNode nxNode : file) {
+                NXNode resolveSkill = nxNode.getFile().resolve(nxNode.getName() + "/skill");
+                if (resolveSkill != null) {
+                    resolveSkill.forEach(it -> {
+                        int skillid = Integer.parseInt(it.getName());
+                        skills.put(skillid, loadFromData(skillid, it));
+                    });
                 }
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
     
-    private static Skill loadFromData(int id, MapleData data) {
+    private static Skill loadFromData(int id, NXNode data) {
         Skill ret = new Skill(id);
         boolean isBuff = false;
-        int skillType = MapleDataTool.getInt("skillType", data, -1);
-        String elem = MapleDataTool.getString("elemAttr", data, null);
+
+        int skillType = data.getChild("skillType") == null ? -1 : Integer.parseInt(data.getChild("skillType").get().toString());
+        String elem = data.getChild("elemAttr") != null ? data.getChild("elemAttr").get().toString() : null;
         if (elem != null) {
             ret.setElement(Element.getFromChar(elem.charAt(0)));
         } else {
             ret.setElement(Element.NEUTRAL);
         }
-        MapleData effect = data.getChildByPath("effect");
+        NXNode effect = data.getChild("effect");
         if (skillType != -1) {
             if (skillType == 2) {
                 isBuff = true;
             }
         } else {
-            MapleData action_ = data.getChildByPath("action");
+            NXNode action_ = data.getChild("action");
             boolean action = false;
 	    if (action_ == null) {
-                if (data.getChildByPath("prepare/action") != null) {
+                if (data.getChild("prepare/action") != null) {
                     action = true;
                 } else {
                     switch (id) {
@@ -149,10 +98,10 @@ public class SkillFactory {
 	    	action = true;
 	    }
 	    ret.setAction(action);
-            MapleData hit = data.getChildByPath("hit");
-            MapleData ball = data.getChildByPath("ball");
+            NXNode hit = data.getChild("hit");
+            NXNode ball = data.getChild("ball");
             isBuff = effect != null && hit == null && ball == null;
-            isBuff |= action_ != null && MapleDataTool.getString("0", action_, "").equals("alert2");
+            isBuff |= action_ != null && (action_.getChild("0") != null ? action_.getChild("0").get().toString() : "").equals("alert2");
             switch (id) {
                 case Hero.RUSH:
                 case Paladin.RUSH:
@@ -374,12 +323,12 @@ public class SkillFactory {
             }
         }
 
-        for (MapleData level : data.getChildByPath("level")) {
+        for (NXNode level : data.getChild("level")) {
             ret.addLevelEffect(MapleStatEffect.loadSkillEffectFromData(level, id, isBuff));
         }
         ret.setAnimationTime(0);
         if (effect != null) {
-            for (MapleData effectEntry : effect) {
+            for (NXNode effectEntry : effect) {
                 ret.incAnimationTime(MapleDataTool.getIntConvert("delay", effectEntry, 0));
             }
         }
