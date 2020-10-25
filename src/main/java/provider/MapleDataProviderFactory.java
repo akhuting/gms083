@@ -21,10 +21,13 @@
 */
 package provider;
 
-import java.io.File;
-import java.io.IOException;
 import provider.wz.WZFile;
 import provider.wz.XMLWZFile;
+import us.aaronweiss.pkgnx.EagerNXFile;
+import us.aaronweiss.pkgnx.NXFile;
+
+import java.io.File;
+import java.io.IOException;
 
 public class MapleDataProviderFactory {
     private final static String wzPath = System.getProperty("wzpath");
@@ -51,5 +54,13 @@ public class MapleDataProviderFactory {
 
     public static File fileInWZPath(String filename) {
         return new File(wzPath, filename);
+    }
+
+    public static NXFile getNXFile(String filename) {
+        try {
+            return new EagerNXFile(wzPath + "/" + filename);
+        } catch (IOException e) {
+            throw new RuntimeException("Loading WZ File failed", e);
+        }
     }
 }

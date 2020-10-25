@@ -19,30 +19,22 @@
 */
 package server;
 
+import client.MapleCharacter;
+import cn.hutool.core.io.resource.ClassPathResource;
+import provider.MapleDataProviderFactory;
+import provider.MapleDataTool;
+import tools.DatabaseConnection;
+import us.aaronweiss.pkgnx.NXNode;
+
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import client.MapleCharacter;
-import cn.hutool.core.io.resource.ClassPathResource;
-import provider.MapleData;
-import provider.MapleDataProvider;
-import provider.MapleDataProviderFactory;
-import provider.MapleDataTool;
-import tools.DatabaseConnection;
 
 /**
  * @author RonanLana
@@ -87,12 +79,12 @@ public class MapleSkillbookInformationProvider {
         return itemid >= 4001107 && itemid <= 4001114 || itemid >= 4161015 && itemid <= 4161023;
     }
 
-    private static int fetchQuestbook(MapleData checkData, String quest) {
-        MapleData questStartData = checkData.getChildByPath(quest).getChildByPath("0");
+    private static int fetchQuestbook(NXNode checkData, String quest) {
+        NXNode questStartData = checkData.getChild(quest).getChild("0");
 
-        MapleData startReqItemData = questStartData.getChildByPath("item");
+        NXNode startReqItemData = questStartData.getChild("item");
         if (startReqItemData != null) {
-            for (MapleData itemData : startReqItemData.getChildren()) {
+            for (NXNode itemData : startReqItemData) {
                 int itemid = MapleDataTool.getInt("id", itemData, 0);
                 if (isQuestBook(itemid)) {
                     return itemid;
@@ -100,11 +92,11 @@ public class MapleSkillbookInformationProvider {
             }
         }
 
-        MapleData startReqQuestData = questStartData.getChildByPath("quest");
+        NXNode startReqQuestData = questStartData.getChild("quest");
         if (startReqQuestData != null) {
             Set<Integer> reqQuests = new HashSet<>();
 
-            for (MapleData questStatusData : startReqQuestData.getChildren()) {
+            for (NXNode questStatusData : startReqQuestData) {
                 int reqQuest = MapleDataTool.getInt("id", questStatusData, 0);
                 if (reqQuest > 0) {
                     reqQuests.add(reqQuest);
@@ -123,16 +115,16 @@ public class MapleSkillbookInformationProvider {
     }
 
     private static void fetchSkillbooksFromQuests() {
-        MapleDataProvider questDataProvider = MapleDataProviderFactory.getDataProvider(new File(System.getProperty("wzpath") + "/" + "Quest.wz"));
-        MapleData actData = questDataProvider.getData("Act.img");
-        MapleData checkData = questDataProvider.getData("Check.img");
+        NXNode questDataProvider = MapleDataProviderFactory.getNXFile("Quest.nx").getRoot();
+        NXNode actData = questDataProvider.getChild("Act.img");
+        NXNode checkData = questDataProvider.getChild("Check.img");
 
-        for (MapleData questData : actData.getChildren()) {
-            for (MapleData questStatusData : questData.getChildren()) {
-                for (MapleData questNodeData : questStatusData.getChildren()) {
+        for (NXNode questData : actData) {
+            for (NXNode questStatusData : questData) {
+                for (NXNode questNodeData : questStatusData) {
                     String actNodeName = questNodeData.getName();
                     if (actNodeName.contentEquals("item")) {
-                        for (MapleData questItemData : questNodeData.getChildren()) {
+                        for (NXNode questItemData : questNodeData) {
                             int itemid = MapleDataTool.getInt("id", questItemData, 0);
                             int itemcount = MapleDataTool.getInt("count", questItemData, 0);
 
@@ -146,7 +138,7 @@ public class MapleSkillbookInformationProvider {
                             }
                         }
                     } else if (actNodeName.contentEquals("skill")) {
-                        for (MapleData questSkillData : questNodeData.getChildren()) {
+                        for (NXNode questSkillData : questNodeData) {
                             int skillid = MapleDataTool.getInt("id", questSkillData, 0);
                             if (is4thJobSkill(skillid)) {
                                 // negative itemids are skill rewards

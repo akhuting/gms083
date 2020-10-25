@@ -21,67 +21,68 @@
 */
 package provider;
 
-import java.awt.Point;
+import us.aaronweiss.pkgnx.NXNode;
+
+import java.awt.*;
 import java.awt.image.BufferedImage;
-import provider.wz.MapleDataType;
 
 public class MapleDataTool {
-    public static String getString(MapleData data) {
-        return ((String) data.getData());
+    public static String getString(NXNode data) {
+        return ((String) data.get());
     }
 
-    public static String getString(MapleData data, String def) {
-        if (data == null || data.getData() == null) {
+    public static String getString(NXNode data, String def) {
+        if (data == null || data.get() == null) {
             return def;
         } else {
-            return ((String) data.getData());
+            return ((String) data.get());
         }
     }
 
-    public static String getString(String path, MapleData data) {
-        return getString(data.getChildByPath(path));
+    public static String getString(String path, NXNode data) {
+        return getString(data.getChild(path));
     }
 
-    public static String getString(String path, MapleData data, String def) {
-        return getString(data.getChildByPath(path), def);
+    public static String getString(String path, NXNode data, String def) {
+        return getString(data.getChild(path), def);
     }
 
-    public static double getDouble(MapleData data) {
-        return ((Double) data.getData()).doubleValue();
+    public static double getDouble(NXNode data) {
+        return ((Double) data.get()).doubleValue();
     }
 
-    public static float getFloat(MapleData data) {
-        return ((Float) data.getData()).floatValue();
+    public static float getFloat(NXNode data) {
+        return ((Float) data.get()).floatValue();
     }
 
-    public static int getInt(MapleData data) {
-        if (data == null || data.getData() == null) {
+    public static int getInt(NXNode data) {
+        if (data == null || data.get() == null) {
             return 0;// DEF?
         }
-        return ((Integer) data.getData()).intValue();
+        return ((Integer) data.get()).intValue();
     }
 
-    public static int getInt(String path, MapleData data) {
-        return getInt(data.getChildByPath(path));
+    public static int getInt(String path, NXNode data) {
+        return getInt(data.getChild(path));
     }
 
-    public static int getIntConvert(MapleData data) {
-        if (data.getType() == MapleDataType.STRING) {
+    public static int getIntConvert(NXNode data) {
+        if (data.get() instanceof String) {
             return Integer.parseInt(getString(data));
         } else {
             return getInt(data);
         }
     }
-    
-    public static int getIntConvert(MapleData data, int def) {
+
+    public static int getIntConvert(NXNode data, int def) {
         if (data == null) {
             return def;
         }
-        if (data.getType() == MapleDataType.STRING) {
-	    String dd = getString(data);
-	    if (dd.endsWith("%")) {
-		dd = dd.substring(0, dd.length() - 1);
-	    }
+        if (data.get() instanceof String) {
+            String dd = getString(data);
+            if (dd.endsWith("%")) {
+                dd = dd.substring(0, dd.length() - 1);
+            }
             try {
                 return Integer.parseInt(dd);
             } catch (NumberFormatException nfe) {
@@ -92,22 +93,22 @@ public class MapleDataTool {
         }
     }
 
-    public static int getIntConvert(String path, MapleData data) {
-        MapleData d = data.getChildByPath(path);
-        if (d.getType() == MapleDataType.STRING) {
+    public static int getIntConvert(String path, NXNode data) {
+        NXNode d = data.getChild(path);
+        if (d.get() instanceof String) {
             return Integer.parseInt(getString(d));
         } else {
             return getInt(d);
         }
     }
 
-    public static int getInt(MapleData data, int def) {
-        if (data == null || data.getData() == null) {
-            return  def;
-        } else if (data.getType() == MapleDataType.STRING) {
+    public static int getInt(NXNode data, int def) {
+        if (data == null || data.get() == null) {
+            return def;
+        } else if (data.get() instanceof String) {
             return Integer.parseInt(getString(data));
         } else {
-            Object numData = data.getData();
+            Object numData = data.get();
             if (numData instanceof Integer) {
                 return (Integer) numData;
             } else {
@@ -116,16 +117,16 @@ public class MapleDataTool {
         }
     }
 
-    public static int getInt(String path, MapleData data, int def) {
-        return getInt(data.getChildByPath(path), def);
+    public static int getInt(String path, NXNode data, int def) {
+        return getInt(data.getChild(path), def);
     }
 
-    public static int getIntConvert(String path, MapleData data, int def) {
-        MapleData d = data.getChildByPath(path);
+    public static int getIntConvert(String path, NXNode data, int def) {
+        NXNode d = data.getChild(path);
         if (d == null) {
             return def;
         }
-        if (d.getType() == MapleDataType.STRING) {
+        if (d.get() instanceof String) {
             try {
                 return Integer.parseInt(getString(d));
             } catch (NumberFormatException nfe) {
@@ -137,20 +138,20 @@ public class MapleDataTool {
         }
     }
 
-    public static BufferedImage getImage(MapleData data) {
-        return ((MapleCanvas) data.getData()).getImage();
+    public static BufferedImage getImage(NXNode data) {
+        return ((MapleCanvas) data.get()).getImage();
     }
 
-    public static Point getPoint(MapleData data) {
-        return ((Point) data.getData());
+    public static Point getPoint(NXNode data) {
+        return ((Point) data.get());
     }
 
-    public static Point getPoint(String path, MapleData data) {
-        return getPoint(data.getChildByPath(path));
+    public static Point getPoint(String path, NXNode data) {
+        return getPoint(data.getChild(path));
     }
 
-    public static Point getPoint(String path, MapleData data, Point def) {
-        final MapleData pointData = data.getChildByPath(path);
+    public static Point getPoint(String path, NXNode data, Point def) {
+        final NXNode pointData = data.getChild(path);
         if (pointData == null) {
             return def;
         }

@@ -22,17 +22,12 @@
 package client;
 
 import constants.skills.*;
-import provider.MapleData;
-import provider.MapleDataProvider;
 import provider.MapleDataProviderFactory;
 import provider.MapleDataTool;
 import server.MapleStatEffect;
 import server.life.Element;
-import us.aaronweiss.pkgnx.EagerNXFile;
 import us.aaronweiss.pkgnx.NXNode;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,28 +43,23 @@ public class SkillFactory {
     }
 
     public static void loadAllSkills() {
-        try {
-            NXNode file = new EagerNXFile(FILE_PATH).getRoot();
-            for (NXNode nxNode : file) {
-                NXNode resolveSkill = nxNode.getFile().resolve(nxNode.getName() + "/skill");
-                if (resolveSkill != null) {
-                    resolveSkill.forEach(it -> {
-                        int skillid = Integer.parseInt(it.getName());
-                        skills.put(skillid, loadFromData(skillid, it));
-                    });
-                }
+        NXNode file = MapleDataProviderFactory.getNXFile(FILE_PATH).getRoot();
+        for (NXNode nxNode : file) {
+            NXNode resolveSkill = nxNode.getFile().resolve(nxNode.getName() + "/skill");
+            if (resolveSkill != null) {
+                resolveSkill.forEach(it -> {
+                    int skillid = Integer.parseInt(it.getName());
+                    skills.put(skillid, loadFromData(skillid, it));
+                });
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
     
     private static Skill loadFromData(int id, NXNode data) {
         Skill ret = new Skill(id);
         boolean isBuff = false;
-
-        int skillType = data.getChild("skillType") == null ? -1 : Integer.parseInt(data.getChild("skillType").get().toString());
-        String elem = data.getChild("elemAttr") != null ? data.getChild("elemAttr").get().toString() : null;
+        int skillType = MapleDataTool.getInt("skillType", data, -1);
+        String elem = MapleDataTool.getString("elemAttr", data, null);
         if (elem != null) {
             ret.setElement(Element.getFromChar(elem.charAt(0)));
         } else {
@@ -101,7 +91,7 @@ public class SkillFactory {
             NXNode hit = data.getChild("hit");
             NXNode ball = data.getChild("ball");
             isBuff = effect != null && hit == null && ball == null;
-            isBuff |= action_ != null && (action_.getChild("0") != null ? action_.getChild("0").get().toString() : "").equals("alert2");
+            isBuff |= action_ != null && MapleDataTool.getString("0", action_, "").equals("alert2");
             switch (id) {
                 case Hero.RUSH:
                 case Paladin.RUSH:
@@ -329,27 +319,26 @@ public class SkillFactory {
         ret.setAnimationTime(0);
         if (effect != null) {
             for (NXNode effectEntry : effect) {
-                ret.incAnimationTime(MapleDataTool.getIntConvert("delay", effectEntry, 0));
+                ret.incAnimationTime(MapleDataTool.getInt("delay", effectEntry, 0));
             }
         }
         return ret;
     }
 
     public static String getSkillName(int skillid) {
-        MapleData data = MapleDataProviderFactory.getDataProvider(new File(System.getProperty("wzpath") + "/" + "String.wz")).getData("Skill.img");
+        NXNode data = MapleDataProviderFactory.getNXFile("String.wz").getRoot().getChild("Skill.img");
         StringBuilder skill = new StringBuilder();
-        skill.append(String.valueOf(skillid));
+        skill.append(skillid);
         if (skill.length() == 4) {
             skill.delete(0, 4);
-            skill.append("000").append(String.valueOf(skillid));
+            skill.append("000").append(skillid);
         }
-        if (data.getChildByPath(skill.toString()) != null) {
-            for (MapleData skilldata : data.getChildByPath(skill.toString()).getChildren()) {
+        if (data.getChild(skill.toString()) != null) {
+            for (NXNode skilldata : data.getChild(skill.toString())) {
                 if (skilldata.getName().equals("name"))
                     return MapleDataTool.getString(skilldata, null);
             }
         }
-
         return null;
     }
 }

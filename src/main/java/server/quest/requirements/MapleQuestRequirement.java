@@ -21,9 +21,9 @@
  */
 package server.quest.requirements;
 
-import provider.MapleData;
-import server.quest.MapleQuestRequirementType;
 import client.MapleCharacter;
+import server.quest.MapleQuestRequirementType;
+import us.aaronweiss.pkgnx.NXNode;
 
 /**
  * Base class for a Quest Requirement. Quest system uses it for all requirements.
@@ -48,7 +48,7 @@ public abstract class MapleQuestRequirement {
 	 * Processes the data and stores it in the class for future use.
 	 * @param data The data to process.
 	 */
-	public abstract void processData(MapleData data);
+	public abstract void processData(NXNode data);
 	
 	public MapleQuestRequirementType getType() {
             return type;

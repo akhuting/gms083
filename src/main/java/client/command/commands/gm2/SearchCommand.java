@@ -23,35 +23,32 @@
 */
 package client.command.commands.gm2;
 
-import client.command.Command;
-import client.MapleClient;
 import client.MapleCharacter;
-import provider.MapleData;
-import provider.MapleDataProvider;
+import client.MapleClient;
+import client.command.Command;
 import provider.MapleDataProviderFactory;
 import provider.MapleDataTool;
 import server.MapleItemInformationProvider;
 import server.quest.MapleQuest;
-import tools.MaplePacketCreator;
 import tools.Pair;
+import us.aaronweiss.pkgnx.NXFile;
+import us.aaronweiss.pkgnx.NXNode;
 
-import java.io.File;
-import java.util.List;
 
 public class SearchCommand extends Command {
-    private static MapleData npcStringData;
-    private static MapleData mobStringData;
-    private static MapleData skillStringData;
-    private static MapleData mapStringData;
+    private static NXNode npcStringData;
+    private static NXNode mobStringData;
+    private static NXNode skillStringData;
+    private static NXNode mapStringData;
     
     {
         setDescription("");
         
-        MapleDataProvider dataProvider = MapleDataProviderFactory.getDataProvider(new File("wz/String.wz"));
-        npcStringData = dataProvider.getData("Npc.img");
-        mobStringData = dataProvider.getData("Mob.img");
-        skillStringData = dataProvider.getData("Skill.img");
-        mapStringData = dataProvider.getData("Map.img");
+        NXFile nxFile = MapleDataProviderFactory.getNXFile("String.nx");
+        npcStringData = nxFile.getRoot().getChild("Npc.img");
+        mobStringData = nxFile.getRoot().getChild("Mob.img");
+        skillStringData = nxFile.getRoot().getChild("Skill.img");
+        mapStringData = nxFile.getRoot().getChild("Map.img");
     }
 
     @Override
@@ -65,7 +62,7 @@ public class SearchCommand extends Command {
 
         String search = joinStringFrom(params,1);
         long start = System.currentTimeMillis();//for the lulz
-        MapleData data = null;
+        NXNode data = null;
         if (!params[0].equalsIgnoreCase("ITEM")) {
             int searchType = 0;
             
@@ -88,8 +85,8 @@ public class SearchCommand extends Command {
                 String name;
                 
                 if (searchType == 0) {
-                    for (MapleData searchData : data.getChildren()) {
-                        name = MapleDataTool.getString(searchData.getChildByPath("name"), "NO-NAME");
+                    for (NXNode searchData : data) {
+                        name = MapleDataTool.getString(searchData.getChild("name"), "NO-NAME");
                         if (name.toLowerCase().contains(search.toLowerCase())) {
                             sb.append("#b").append(Integer.parseInt(searchData.getName())).append("#k - #r").append(name).append("\r\n");
                         }
@@ -97,10 +94,10 @@ public class SearchCommand extends Command {
                 } else if (searchType == 1) {
                     String mapName, streetName;
                     
-                    for (MapleData searchDataDir : data.getChildren()) {
-                        for (MapleData searchData : searchDataDir.getChildren()) {
-                            mapName = MapleDataTool.getString(searchData.getChildByPath("mapName"), "NO-NAME");
-                            streetName = MapleDataTool.getString(searchData.getChildByPath("streetName"), "NO-NAME");
+                    for (NXNode searchDataDir : data) {
+                        for (NXNode searchData : searchDataDir) {
+                            mapName = MapleDataTool.getString(searchData.getChild("mapName"), "NO-NAME");
+                            streetName = MapleDataTool.getString(searchData.getChild("streetName"), "NO-NAME");
                             
                             if (mapName.toLowerCase().contains(search.toLowerCase()) || streetName.toLowerCase().contains(search.toLowerCase())) {
                                 sb.append("#b").append(Integer.parseInt(searchData.getName())).append("#k - #r").append(streetName).append(" - ").append(mapName).append("\r\n");
