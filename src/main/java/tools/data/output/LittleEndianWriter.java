@@ -111,4 +111,6 @@ public interface LittleEndianWriter {
      * @param b The boolean to write.
      */
     void writeBool(final boolean b);
+
+    void writeAsciiString(String s, final int max);
 }
