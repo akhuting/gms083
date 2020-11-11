@@ -181,4 +181,14 @@ public class GenericLittleEndianWriter implements LittleEndianWriter {
     public void writeBool(final boolean b) {
         write(b ? 1 : 0);
     }
+
+    public void writeAsciiString(String s, int max) {
+        if (s.getBytes(ASCII).length > max) {
+            s = s.substring(0, max);
+        }
+        write(s.getBytes(ASCII));
+        for (int i = s.getBytes(ASCII).length; i < max; i++) {
+            write(0);
+        }
+    }
 }
